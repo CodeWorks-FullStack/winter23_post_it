@@ -11,7 +11,10 @@ export class AlbumsController extends BaseController {
       .get('/:albumId', this.getOneAlbumById)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createAlbum)
+      .delete('/:albumId', this.archiveAlbum)
   }
+
+
   async getOneAlbumById(req, res, next) {
     try {
 
@@ -50,5 +53,18 @@ export class AlbumsController extends BaseController {
     }
 
   }
+
+  async archiveAlbum(req, res, next) {
+    try {
+      const albumId = req.params.albumId
+      const requestorId = req.userInfo.id
+      const album = await albumsService.archiveAlbum(albumId, requestorId)
+      return res.send(album)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+
 
 }

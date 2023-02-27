@@ -1,7 +1,21 @@
 import { dbContext } from "../db/DbContext.js"
-import { BadRequest } from "../utils/Errors.js"
+import { BadRequest, Forbidden } from "../utils/Errors.js"
 
 class AlbumsService {
+  async archiveAlbum(albumId, requestorId) {
+
+    const album = await this.getOneAlbumById(albumId)
+
+    if (album.creatorId.toString() != requestorId) {
+      throw new Forbidden('You are not allowed to perform this action... it is not your album to close')
+    }
+
+    album.archived = true
+    await album.save()
+    return album
+  }
+
+
   async getOneAlbumById(albumId) {
 
     const album = await dbContext.Albums.findById(albumId).populate('creator', 'name picture')
