@@ -3,6 +3,11 @@ import { Forbidden } from "../utils/Errors.js"
 import { albumsService } from "./AlbumsService.js"
 
 class AlbumMembersService {
+  async getAlbumMembersByAlbumId(albumId) {
+    const albumMembers = await dbContext.AlbumMembers.find({ albumId })
+      .populate('profile', 'name picture')
+    return albumMembers
+  }
   async createAlbumMember(albumMemberData) {
     const album = await albumsService.getOneAlbumById(albumMemberData.albumId)
 
