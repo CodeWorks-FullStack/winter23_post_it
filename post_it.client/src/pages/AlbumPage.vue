@@ -20,6 +20,12 @@
                   add picture
                 </span>
               </button>
+              <div v-else-if="album.archived" class="bg-danger rounded text-center p-3">
+                <i class="mdi mdi-lock"></i>
+                <span>
+                  Archived
+                </span>
+              </div>
             </div>
           </div>
         </div>

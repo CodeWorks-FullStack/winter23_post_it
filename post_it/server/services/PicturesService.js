@@ -1,4 +1,6 @@
 import { dbContext } from "../db/DbContext.js"
+import { Forbidden } from "../utils/Errors.js"
+import { albumsService } from "./AlbumsService.js"
 
 class PicturesService {
   async getPicturesInAlbum(albumId) {
@@ -9,6 +11,17 @@ class PicturesService {
   }
 
   async createPicture(pictureData) {
+
+    // Get album
+    const album = await albumsService.getOneAlbumById(pictureData.albumId)
+
+    // Check if it is archived and throw an error
+    if (album.archived) {
+      throw new Forbidden('Album is archived 🔒')
+    }
+
+
+
     const picture = await dbContext.Pictures.create(pictureData)
     // NOTE you only have to drop a line to populate on creates!
     await picture.populate('creator', 'name picture')

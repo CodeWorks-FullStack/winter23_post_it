@@ -19,7 +19,7 @@
         </li>
         <li>
           <button @click="archiveAlbum(album.id)"
-            v-if="account.id && route.name == 'Album' && album.creatorId == account.id" class="btn btn-success ms-4"
+            v-if="account.id && route.name == 'Album' && album?.creatorId == account.id" class="btn btn-success ms-4"
             :disabled="album.archived">
             <i class="mdi mdi-close-circle text-dark"></i>
             {{ album.archived ? 'archived' : 'close album' }}

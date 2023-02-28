@@ -27,6 +27,7 @@ class AlbumsService {
     return album
 
   }
+
   async getAllAlbums() {
     const albums = await dbContext.Albums.find().populate('creator', 'name picture')
     return albums
