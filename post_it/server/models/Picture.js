@@ -11,3 +11,10 @@ export const PictureSchema = new Schema({
   albumId: { type: Schema.Types.ObjectId, required: true, ref: 'Album' }
 
 }, defaultSchemaOptions)
+
+PictureSchema.virtual('creator', {
+  localField: 'creatorId',
+  foreignField: '_id',
+  justOne: true,
+  ref: 'Account'
+})

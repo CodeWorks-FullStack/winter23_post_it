@@ -1,5 +1,6 @@
 import { AppState } from "../AppState.js"
 import { Album } from "../models/Album.js"
+import { logger } from "../utils/Logger.js"
 import { api } from "./AxiosService.js"
 
 class AlbumsService {
@@ -16,6 +17,10 @@ class AlbumsService {
     AppState.album = new Album(res.data)
   }
 
+  async createAlbum(formData) {
+    const res = await api.post('api/albums', formData)
+    logger.log('creating album', res.data)
+  }
 
 }
 

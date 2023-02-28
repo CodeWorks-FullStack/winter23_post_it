@@ -4,7 +4,7 @@ import { basicStringType, defaultSchemaOptions } from "../db/Constants.js";
 export const AlbumSchema = new Schema({
 
   title: basicStringType,
-  category: { ...basicStringType, enum: ['cars', 'animals', 'pokemon', 'misc', 'fish', 'food', 'germs', 'coding', 'games'] },
+  category: { ...basicStringType, enum: ['cars', 'animals', 'pokemon', 'misc', 'fish', 'food', 'germs', 'coding', 'games'], default: 'misc' },
   coverImg: { ...basicStringType, maxLength: 5000 },
   archived: { type: Boolean, default: false, required: true },
 
