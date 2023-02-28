@@ -13,3 +13,10 @@ AlbumMemberSchema.virtual('profile', {
   justOne: true,
   ref: 'Account'
 })
+
+AlbumMemberSchema.virtual('album', {
+  localField: 'albumId',
+  foreignField: '_id',
+  justOne: true,
+  ref: 'Album'
+})

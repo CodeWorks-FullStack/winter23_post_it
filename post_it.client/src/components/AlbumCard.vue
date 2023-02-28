@@ -1,13 +1,13 @@
 <template>
   <router-link class="text-light selectable" :to="{ name: 'Album', params: { albumId: album.id } }">
-    <div class="AlbumCard card my-3" :style="{backgroundColor: bg }">
+    <div class="AlbumCard card my-3" :style="{ backgroundColor: bg }">
       <img :src="album.coverImg" alt="">
       <div class="card-body text-center">
         <p class="mb-0">
           <b>{{ album.title }}</b>
         </p>
         <p class="">
-          <span>{{ album.memberCount }}</span>
+          <span>{{ album.albumMemberCount }}</span>
           <i class="mdi mdi-heart"></i>
         </p>
       </div>

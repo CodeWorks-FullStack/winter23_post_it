@@ -1,5 +1,6 @@
 import { Auth0Provider } from '@bcwdev/auth0provider'
 import { accountService } from '../services/AccountService'
+import { albumMembersService } from '../services/AlbumMembersService.js'
 import BaseController from '../utils/BaseController'
 
 export class AccountController extends BaseController {
@@ -8,8 +9,9 @@ export class AccountController extends BaseController {
     this.router
       .use(Auth0Provider.getAuthorizedUserInfo)
       .get('', this.getUserAccount)
-      .get('')
+      .get('/collaborators', this.getAlbumsThatIAmACollaboratorOn)
   }
+
 
   async getUserAccount(req, res, next) {
     try {
@@ -19,4 +21,15 @@ export class AccountController extends BaseController {
       next(error)
     }
   }
+
+  async getAlbumsThatIAmACollaboratorOn(req, res, next) {
+    try {
+      const accountId = req.userInfo.id
+      const albums = await albumMembersService.getAlbumsThatIAmACollaboratorOn(accountId)
+      return res.send(albums)
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }

@@ -20,4 +20,11 @@ AlbumSchema.virtual('creator', {
   foreignField: '_id',
   justOne: true
 })
+// NOTE use this album's id to find all of the albumMembers that have this as their albumId
+AlbumSchema.virtual('albumMemberCount', {
+  localField: '_id',
+  foreignField: 'albumId',
+  count: true,
+  ref: 'AlbumMember'
+})
 

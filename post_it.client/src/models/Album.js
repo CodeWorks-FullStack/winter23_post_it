@@ -1,7 +1,7 @@
 
 export class Album {
 
-  constructor(data) {
+  constructor (data) {
     this.id = data.id;
     this.title = data.title;
     this.category = data.category;
@@ -9,7 +9,7 @@ export class Album {
     this.coverImg = data.coverImg;
     this.creatorId = data.creatorId;
     this.creator = data.creator;
-    this.memberCount = data.memberCount || 0;
+    this.albumMemberCount = data.albumMemberCount || 0;
   }
 
 }
