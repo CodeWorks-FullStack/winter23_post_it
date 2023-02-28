@@ -22,6 +22,11 @@ class AlbumsService {
     logger.log('creating album', res.data)
   }
 
+  async archiveAlbum(albumId) {
+    const res = await api.delete('api/albums/' + albumId)
+    logger.log('archiving album', res.data)
+  }
+
 }
 
 

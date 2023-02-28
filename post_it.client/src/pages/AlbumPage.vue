@@ -1,9 +1,9 @@
 <template>
   <div class="AlbumPage container-fluid" v-if="album">
     <div class="row">
-      <div class="col-3">
+      <div class="col-3 mt-3">
         <div class="row">
-          <div class="col-12 d-flex justify-content-between mt-3">
+          <div class="col-12 d-flex justify-content-between ">
             <img :src="album.coverImg" alt="" class="img-fluid album-image rounded">
             <div>
               <div class="bg-info p-2 text-light rounded mb-3">
@@ -14,18 +14,23 @@
                   <b>by {{ album.creator.name }}</b>
                 </p>
               </div>
-              <button class="btn btn-warning">
+              <button v-if="account.id && !album.archived" class="btn btn-warning">
                 <i class="mdi mdi-plus-box"></i>
                 <span>
                   add picture
-
                 </span>
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-8"></div>
+      <div class="col-8 mt-3">
+        <div class="row">
+          <div v-for="p in pictures" class="col-3">
+            <img :src="p.imgUrl" alt="" class="img-fluid rounded">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -43,6 +48,7 @@ import { onMounted, computed, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
+import { picturesService } from '../services/PicturesService.js'
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
 
@@ -56,11 +62,20 @@ export default {
       try {
         const albumId = route.params.albumId
         await albumsService.getOneAlbumById(albumId)
-        // TODO get pictures
-
       } catch (error) {
         Pop.error('Go Home we don\'t want you here', '[Getting Album By Id]')
         router.push('/') // that was a bad Id
+      }
+    }
+
+    // TODO get pictures
+    async function getPicturesByAlbumId() {
+      try {
+        const albumId = route.params.albumId
+        await picturesService.getPicturesByAlbumId(albumId)
+      } catch (error) {
+        logger.error(error)
+        Pop.error(error.message)
       }
     }
 
@@ -73,11 +88,14 @@ export default {
     watchEffect(() => {
       if (route.params.albumId) {
         getOneAlbumById()
+        getPicturesByAlbumId()
       }
     })
 
     return {
-      album: computed(() => AppState.album)
+      album: computed(() => AppState.album),
+      pictures: computed(() => AppState.pictures),
+      account: computed(() => AppState.account)
     }
   }
 }

@@ -12,9 +12,17 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto">
         <li>
-          <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#albumModal">
+          <button v-if="account.id" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#albumModal">
             <i class="mdi mdi-plus-box"></i>
             new album
+          </button>
+        </li>
+        <li>
+          <button @click="archiveAlbum(album.id)"
+            v-if="account.id && route.name == 'Album' && album.creatorId == account.id" class="btn btn-success ms-4"
+            :disabled="album.archived">
+            <i class="mdi mdi-close-circle text-dark"></i>
+            {{ album.archived ? 'archived' : 'close album' }}
           </button>
         </li>
       </ul>
@@ -25,10 +33,31 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { AppState } from '../AppState.js';
+import { albumsService } from '../services/AlbumsService.js';
+import { logger } from '../utils/Logger.js';
+import Pop from '../utils/Pop.js';
 import Login from './Login.vue'
 export default {
   setup() {
-    return {}
+    const route = useRoute()
+    return {
+      route,
+      account: computed(() => AppState.account),
+      album: computed(() => AppState.album),
+      async archiveAlbum(albumId) {
+        try {
+          if (await Pop.confirm('Are you sure bud?', 'Really bud????', 'Alright, bud')) {
+            await albumsService.archiveAlbum(albumId)
+          }
+        } catch (error) {
+          logger.error(error)
+          Pop.error(error.message)
+        }
+      }
+    }
   },
   components: { Login }
 }
