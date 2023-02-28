@@ -41,7 +41,14 @@ class AlbumMembersService {
     }
 
     const albumMember = await dbContext.AlbumMembers.create(albumMemberData)
-    await albumMember.populate('profile album', 'name picture')
+    await albumMember.populate('profile', 'name picture')
+    await albumMember.populate({
+      path: 'album',
+      populate: {
+        path: 'creator albumMemberCount',
+        select: 'name picture'
+      }
+    })
     return albumMember
   }
 

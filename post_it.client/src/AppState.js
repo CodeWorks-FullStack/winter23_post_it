@@ -16,6 +16,9 @@ export const AppState = reactive({
   /** @type {import('./models/Album.js').Album | null} */
   album: null,
 
+  /** @type {import('./models/Album.js').Album[]} */
+  myAlbums: [],
+
   /** @type {import('./models/Collab.js').Collab[]} */
   collabs: []
 })

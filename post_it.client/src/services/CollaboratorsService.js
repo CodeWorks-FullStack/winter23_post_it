@@ -1,4 +1,5 @@
 import { AppState } from "../AppState.js"
+import { Album } from "../models/Album.js"
 import { Collab } from "../models/Collab.js"
 import { logger } from "../utils/Logger.js"
 import { api } from "./AxiosService.js"
@@ -15,6 +16,7 @@ class CollaboratorsService {
     const res = await api.post('api/collaborators', albumData)
     logger.log('becoming collab', res.data)
     AppState.collabs.push(new Collab(res.data))
+    AppState.myAlbums.push(new Album(res.data.album))
   }
 
   async removeCollaboration(collaboratorId) {
@@ -24,6 +26,12 @@ class CollaboratorsService {
     if (collabIndex !== -1) {
       AppState.collabs.splice(collabIndex, 1)
     }
+  }
+
+  async getMyCollabinAlbums() {
+    const res = await api.get('account/collaborators')
+    logger.log('getting my collabin albums', res.data)
+    AppState.myAlbums = res.data.map(a => new Album(a.album))
   }
 }
 
