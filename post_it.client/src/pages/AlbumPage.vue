@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-3 mt-3">
         <div class="row">
-          <div class="col-12 d-flex justify-content-between ">
+          <div class="col-12 d-flex justify-content-between mb-3">
             <img :src="album.coverImg" alt="" class="img-fluid album-image rounded">
             <div>
               <div class="bg-info p-2 text-light rounded mb-3">
@@ -25,6 +25,30 @@
                 <span>
                   Archived
                 </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-3 d-flex justify-content-around">
+            <div class="bg-warning rounded p-2 fw-bold">
+              <div>{{ collabs.length }}</div>
+              <div>Collaborators</div>
+            </div>
+            <button v-if="!foundCollab" @click="createCollaboration()" :disabled="album.archived" class="btn btn-success">
+              <i class="mdi mdi-heart"></i>
+              <br>
+              <b>Collab</b>
+            </button>
+            <button v-else @click="removeCollaboration(foundCollab.collaboratorId)" class="btn btn-danger">
+              <i class="mdi mdi-close-circle"></i>
+              <br>
+              <b>UnCollab</b>
+            </button>
+          </div>
+          <div class="col-12">
+            <div class="row">
+              <div v-for="c in collabs" class="col-4">
+                <img class="img-fluid rounded" :src="c.profile.picture" :alt="c.profile.name + ' picture'"
+                  :title="c.profile.name">
               </div>
             </div>
           </div>
@@ -54,6 +78,7 @@ import { onMounted, computed, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
+import { collaboratorsService } from '../services/CollaboratorsService.js'
 import { picturesService } from '../services/PicturesService.js'
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
@@ -85,6 +110,17 @@ export default {
       }
     }
 
+
+    async function getCollaboratorsByAlbumId() {
+      try {
+        const albumId = route.params.albumId
+        await collaboratorsService.getCollaboratorsByAlbumId(albumId)
+      } catch (error) {
+        logger.error(error)
+        Pop.error(error.message)
+      }
+    }
+
     // NOTE watcheffect replaced this
     // onMounted(() => {
     //   getOneAlbumById()
@@ -95,13 +131,34 @@ export default {
       if (route.params.albumId) {
         getOneAlbumById()
         getPicturesByAlbumId()
+        getCollaboratorsByAlbumId()
       }
     })
 
     return {
       album: computed(() => AppState.album),
       pictures: computed(() => AppState.pictures),
-      account: computed(() => AppState.account)
+      account: computed(() => AppState.account),
+      collabs: computed(() => AppState.collabs),
+      foundCollab: computed(() => AppState.collabs.find(c => c.accountId == AppState.account.id)),
+      async createCollaboration() {
+        try {
+          await collaboratorsService.createCollaboration({ albumId: route.params.albumId })
+        } catch (error) {
+          logger.error(error)
+          Pop.error(error.message)
+        }
+      },
+      async removeCollaboration(collaboratorId) {
+        try {
+          if (await Pop.confirm('BUD ARE YOU SURE', 'REALLY REALLY REALLY SURE?', 'ok')) {
+            await collaboratorsService.removeCollaboration(collaboratorId)
+          }
+        } catch (error) {
+          logger.error(error)
+          Pop.error(error.message)
+        }
+      }
     }
   }
 }

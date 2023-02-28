@@ -20,3 +20,5 @@ AlbumMemberSchema.virtual('album', {
   justOne: true,
   ref: 'Album'
 })
+
+AlbumMemberSchema.index({ albumId: 1, accountId: 1 }, { unique: true })
