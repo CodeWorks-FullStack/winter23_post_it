@@ -47,8 +47,7 @@
           <div class="col-12">
             <div class="row">
               <div v-for="c in collabs" class="col-4">
-                <img class="img-fluid rounded" :src="c.profile.picture" :alt="c.profile.name + ' picture'"
-                  :title="c.profile.name">
+                <img class="img-fluid rounded" :src="c.picture" :alt="c.name + ' picture'" :title="c.name">
               </div>
             </div>
           </div>
@@ -140,7 +139,7 @@ export default {
       pictures: computed(() => AppState.pictures),
       account: computed(() => AppState.account),
       collabs: computed(() => AppState.collabs),
-      foundCollab: computed(() => AppState.collabs.find(c => c.accountId == AppState.account.id)),
+      foundCollab: computed(() => AppState.collabs.find(c => c.id == AppState.account.id)),
       async createCollaboration() {
         try {
           await collaboratorsService.createCollaboration({ albumId: route.params.albumId })

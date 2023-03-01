@@ -1,9 +1,8 @@
 import { Profile } from "./Account.js"
 
-export class Collab {
+export class CollabProfile extends Profile {
   constructor (data) {
+    super(data.profile)
     this.collaboratorId = data.id
-    this.accountId = data.accountId
-    this.profile = new Profile(data.profile)
   }
 }
