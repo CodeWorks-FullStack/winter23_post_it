@@ -14,7 +14,8 @@
                   <b>by {{ album.creator.name }}</b>
                 </p>
               </div>
-              <button v-if="account.id && !album.archived" class="btn btn-warning">
+              <button v-if="account.id && !album.archived && foundCollab" class="btn btn-warning"
+                data-bs-target="#pictureModal" data-bs-toggle="modal">
                 <i class="mdi mdi-plus-box"></i>
                 <span>
                   add picture
@@ -69,6 +70,10 @@
         class="mdi mdi-pinwheel mdi-spin"></i><i class="mdi mdi-pinwheel mdi-spin"></i>
     </h1>
   </div>
+
+  <ModalComponent id="pictureModal">
+    <PictureForm />
+  </ModalComponent>
 </template>
 
 
@@ -76,6 +81,8 @@
 import { onMounted, computed, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { AppState } from '../AppState.js';
+import ModalComponent from '../components/ModalComponent.vue';
+import PictureForm from '../components/PictureForm.vue';
 import { albumsService } from '../services/AlbumsService.js';
 import { collaboratorsService } from '../services/CollaboratorsService.js'
 import { picturesService } from '../services/PicturesService.js'
@@ -84,56 +91,51 @@ import Pop from '../utils/Pop.js';
 
 export default {
   setup() {
-
-    const route = useRoute()
-    const router = useRouter()
-
+    const route = useRoute();
+    const router = useRouter();
     async function getOneAlbumById() {
       try {
-        const albumId = route.params.albumId
-        await albumsService.getOneAlbumById(albumId)
-      } catch (error) {
-        Pop.error('Go Home we don\'t want you here', '[Getting Album By Id]')
-        router.push('/') // that was a bad Id
+        const albumId = route.params.albumId;
+        await albumsService.getOneAlbumById(albumId);
+      }
+      catch (error) {
+        Pop.error("Go Home we don't want you here", "[Getting Album By Id]");
+        router.push("/"); // that was a bad Id
       }
     }
-
     // TODO get pictures
     async function getPicturesByAlbumId() {
       try {
-        const albumId = route.params.albumId
-        await picturesService.getPicturesByAlbumId(albumId)
-      } catch (error) {
-        logger.error(error)
-        Pop.error(error.message)
+        const albumId = route.params.albumId;
+        await picturesService.getPicturesByAlbumId(albumId);
+      }
+      catch (error) {
+        logger.error(error);
+        Pop.error(error.message);
       }
     }
-
-
     async function getCollaboratorsByAlbumId() {
       try {
-        const albumId = route.params.albumId
-        await collaboratorsService.getCollaboratorsByAlbumId(albumId)
-      } catch (error) {
-        logger.error(error)
-        Pop.error(error.message)
+        const albumId = route.params.albumId;
+        await collaboratorsService.getCollaboratorsByAlbumId(albumId);
+      }
+      catch (error) {
+        logger.error(error);
+        Pop.error(error.message);
       }
     }
-
     // NOTE watcheffect replaced this
     // onMounted(() => {
     //   getOneAlbumById()
     // })
-
     // NOTE whenever a reactive property changes(route.params.albumId) rerun this code
     watchEffect(() => {
       if (route.params.albumId) {
-        getOneAlbumById()
-        getPicturesByAlbumId()
-        getCollaboratorsByAlbumId()
+        getOneAlbumById();
+        getPicturesByAlbumId();
+        getCollaboratorsByAlbumId();
       }
-    })
-
+    });
     return {
       album: computed(() => AppState.album),
       pictures: computed(() => AppState.pictures),
@@ -142,24 +144,27 @@ export default {
       foundCollab: computed(() => AppState.collabs.find(c => c.id == AppState.account.id)),
       async createCollaboration() {
         try {
-          await collaboratorsService.createCollaboration({ albumId: route.params.albumId })
-        } catch (error) {
-          logger.error(error)
-          Pop.error(error.message)
+          await collaboratorsService.createCollaboration({ albumId: route.params.albumId });
+        }
+        catch (error) {
+          logger.error(error);
+          Pop.error(error.message);
         }
       },
       async removeCollaboration(collaboratorId) {
         try {
-          if (await Pop.confirm('BUD ARE YOU SURE', 'REALLY REALLY REALLY SURE?', 'ok')) {
-            await collaboratorsService.removeCollaboration(collaboratorId)
+          if (await Pop.confirm("BUD ARE YOU SURE", "REALLY REALLY REALLY SURE?", "ok")) {
+            await collaboratorsService.removeCollaboration(collaboratorId);
           }
-        } catch (error) {
-          logger.error(error)
-          Pop.error(error.message)
+        }
+        catch (error) {
+          logger.error(error);
+          Pop.error(error.message);
         }
       }
-    }
-  }
+    };
+  },
+  components: { ModalComponent, PictureForm }
 }
 </script>
 

@@ -55,7 +55,7 @@ export default {
         try {
           const formData = editable.value
           await albumsService.createAlbum(formData)
-          editable.value = {}
+          editable.value = { category: 'misc' }
         } catch (error) {
           logger.error(error)
           Pop.error(error.message)
