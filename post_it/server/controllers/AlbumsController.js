@@ -2,6 +2,7 @@ import { Auth0Provider } from "@bcwdev/auth0provider"
 import { albumMembersService } from "../services/AlbumMembersService.js"
 import { albumsService } from "../services/AlbumsService.js"
 import { picturesService } from "../services/PicturesService.js"
+import { socketProvider } from "../SocketProvider.js"
 import BaseController from "../utils/BaseController.js"
 
 export class AlbumsController extends BaseController {
@@ -71,6 +72,10 @@ export class AlbumsController extends BaseController {
       albumData.creatorId = req.userInfo.id // this makes me happy 😁
 
       const album = await albumsService.createAlbum(albumData)
+      // NOTE bringing in the socketProvider .message will send everyone on the website a message
+      // NOTE the magic string needs to match what the listener is on the client 
+      // NOTE the object is going back to the client because we need the data from whoever just created this to be sent to everyone connected to the socket
+      socketProvider.message('created:album', album)
       return res.send(album)
 
 
