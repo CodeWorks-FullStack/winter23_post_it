@@ -20,7 +20,8 @@ class AlbumsService {
   async createAlbum(formData) {
     const res = await api.post('api/albums', formData)
     logger.log('creating album', res.data)
-    // NOTE this commented out because we are doing the push from the handler 
+
+    // NOTE this commented out because we are doing the push from the socketsService now  
     // AppState.albums.push(new Album(res.data))
   }
 

@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { authGuard } from '@bcwdev/auth0provider-client'
+import { authGuard, authSettled } from '@bcwdev/auth0provider-client'
 
 function loadPage(page) {
   return () => import(`./pages/${page}.vue`)
@@ -14,7 +14,9 @@ const routes = [
   {
     path: '/albums/:albumId',
     name: 'Album',
-    component: loadPage('AlbumPage')
+    component: loadPage('AlbumPage'),
+    // NOTE you wait to see if you're logged in or not before it loads the page
+    beforeEnter: authSettled
   },
   {
     path: '/account',

@@ -78,7 +78,7 @@
 
 
 <script>
-import { onMounted, computed, watchEffect } from 'vue';
+import { onUnmounted, computed, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { AppState } from '../AppState.js';
 import ModalComponent from '../components/ModalComponent.vue';
@@ -88,6 +88,7 @@ import { collaboratorsService } from '../services/CollaboratorsService.js'
 import { picturesService } from '../services/PicturesService.js'
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
+import { socketService } from '../services/SocketService.js';
 
 export default {
   setup() {
@@ -124,6 +125,29 @@ export default {
         Pop.error(error.message);
       }
     }
+
+    function joinRoom() {
+      try {
+        socketService.emit('join:room', { roomName: route.params.albumId })
+      } catch (error) {
+        console.error(error)
+        // @ts-ignore 
+        Pop.error(('[ERROR]'), error.message)
+      }
+    }
+
+    function leaveRoom() {
+      try {
+        // NOTE this works the same way as join, you want to be able to leave the room so that you don't see posts that happen in any room that you've gone into in one session
+        // NOTE you need to pass in the appState.album.id because when you click to go back to the home page, the route.params is gone because its no longer the route, you can grab the id that you need from the appState to use as the object you send to the server
+        socketService.emit('leave:room', { roomName: AppState.album.id })
+      } catch (error) {
+        console.error(error)
+        // @ts-ignore 
+        Pop.error(('[ERROR]'), error.message)
+      }
+    }
+
     // NOTE watcheffect replaced this
     // onMounted(() => {
     //   getOneAlbumById()
@@ -131,11 +155,19 @@ export default {
     // NOTE whenever a reactive property changes(route.params.albumId) rerun this code
     watchEffect(() => {
       if (route.params.albumId) {
+        joinRoom()
         getOneAlbumById();
         getPicturesByAlbumId();
         getCollaboratorsByAlbumId();
       }
     });
+
+    // NOTE runs code whenever the page is no longer mounted in the router view i.e. when we click go to home 
+    onUnmounted(() => {
+      logger.log(route.params.albumId)
+      leaveRoom()
+    })
+
     return {
       album: computed(() => AppState.album),
       pictures: computed(() => AppState.pictures),

@@ -1,6 +1,5 @@
 import '@mdi/font/css/materialdesignicons.css'
 import 'bootstrap'
-import './handlers/AlbumHandler.js'
 import { createApp } from 'vue'
 // @ts-ignore
 import App from './App.vue'

@@ -72,7 +72,7 @@ export class AlbumsController extends BaseController {
       albumData.creatorId = req.userInfo.id // this makes me happy 😁
 
       const album = await albumsService.createAlbum(albumData)
-      // NOTE bringing in the socketProvider .message will send everyone on the website a message
+      // NOTE bringing in the socketProvider .message will send everyone on the website a message do this after you get the data back from the service
       // NOTE the magic string needs to match what the listener is on the client 
       // NOTE the object is going back to the client because we need the data from whoever just created this to be sent to everyone connected to the socket
       socketProvider.message('created:album', album)
