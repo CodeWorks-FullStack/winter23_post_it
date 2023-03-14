@@ -19,10 +19,16 @@
         </li>
         <li>
           <button @click="archiveAlbum(album.id)"
-            v-if="account.id && route.name == 'Album' && album?.creatorId == account.id" class="btn btn-success ms-4"
-            :disabled="album.archived">
+            v-if="account.id && route.name == 'Album' && (album?.creatorId == account.id || admin)"
+            class="btn btn-success ms-4" :disabled="album?.archived">
             <i class="mdi mdi-close-circle text-dark"></i>
-            {{ album.archived ? 'archived' : 'close album' }}
+            {{ album?.archived ? 'archived' : 'close album' }}
+          </button>
+        </li>
+        <li>
+          <button @click="deleteAllPictures()" v-if="admin && route.name == 'Album'" class="ms-4 btn btn-danger">
+            <i class="mdi mdi-fire text-dark"></i>
+            Delete All
           </button>
         </li>
       </ul>
@@ -37,6 +43,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
+import { picturesService } from "../services/PicturesService";
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
 import Login from './Login.vue'
@@ -47,6 +54,7 @@ export default {
       route,
       account: computed(() => AppState.account),
       album: computed(() => AppState.album),
+      admin: computed(() => AppState.account?.roles.includes('Admin')),
       async archiveAlbum(albumId) {
         try {
           if (await Pop.confirm('Are you sure bud?', 'Really bud????', 'Alright, bud')) {
@@ -55,6 +63,17 @@ export default {
         } catch (error) {
           logger.error(error)
           Pop.error(error.message)
+        }
+      },
+      async deleteAllPictures() {
+        try {
+          const yes = await Pop.confirm("ARE YOU REALLY SURE BUDDY!!! THAT'S LIKE ALLL THE PICTURES MAN.")
+          if (!yes) { return }
+          let albumId = route.params.albumId
+          await picturesService.deleteAll(albumId)
+        } catch (error) {
+          logger.error('[ERROR]', error)
+          Pop.error(('[ERROR]'), error.message)
         }
       }
     }
