@@ -6,7 +6,7 @@ import { socketProvider } from "../SocketProvider.js";
 import BaseController from "../utils/BaseController.js";
 
 export class AlbumsController extends BaseController {
-  constructor() {
+  constructor () {
     super("api/albums");
     this.router
 
@@ -17,7 +17,7 @@ export class AlbumsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post("", this.createAlbum)
       .delete("/:albumId", this.archiveAlbum)
-      .use(Auth0Provider.hasRoles(["Admin"]))
+      .use(Auth0Provider.hasRoles("admin"))
       .delete("/:albumId/pictures", this.deleteAllPictures);
   }
 

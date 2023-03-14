@@ -60,10 +60,7 @@ class AccountService {
     });
     account = await createAccountIfNeeded(account, user);
     await mergeSubsIfNeeded(account, user);
-    if (user.roles.length && account) {
-      account.roles = user.roles;
-      // account.save()
-    }
+    account.roles = user.roles;
     return account;
   }
 

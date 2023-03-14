@@ -1,14 +1,14 @@
 export class Profile {
-  constructor(data) {
+  constructor (data) {
     this.id = data.id;
     this.name = data.name;
     this.picture = data.picture;
-    this.roles = data.roles;
   }
 }
 export class Account extends Profile {
-  constructor(data) {
+  constructor (data) {
     super(data);
+    this.roles = data.roles || [];
     this.email = data.email;
     // TODO add additional properties if needed
   }

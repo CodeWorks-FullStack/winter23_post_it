@@ -19,14 +19,14 @@
         </li>
         <li>
           <button @click="archiveAlbum(album.id)"
-            v-if="account.id && route.name == 'Album' && (album?.creatorId == account.id || admin)"
+            v-if="account.id && route.name == 'Album' && (album?.creatorId == account.id || isAdmin)"
             class="btn btn-success ms-4" :disabled="album?.archived">
             <i class="mdi mdi-close-circle text-dark"></i>
             {{ album?.archived ? 'archived' : 'close album' }}
           </button>
         </li>
         <li>
-          <button @click="deleteAllPictures()" v-if="admin && route.name == 'Album'" class="ms-4 btn btn-danger">
+          <button @click="deleteAllPictures()" v-if="isAdmin && route.name == 'Album'" class="ms-4 btn btn-danger">
             <i class="mdi mdi-fire text-dark"></i>
             Delete All
           </button>
@@ -43,6 +43,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { AppState } from '../AppState.js';
 import { albumsService } from '../services/AlbumsService.js';
+import { AuthService } from '../services/AuthService.js';
 import { picturesService } from "../services/PicturesService";
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
@@ -54,7 +55,7 @@ export default {
       route,
       account: computed(() => AppState.account),
       album: computed(() => AppState.album),
-      admin: computed(() => AppState.account?.roles.includes('Admin')),
+      isAdmin: computed(() => AppState.account.id ? AppState.account.roles.includes('admin') : false),
       async archiveAlbum(albumId) {
         try {
           if (await Pop.confirm('Are you sure bud?', 'Really bud????', 'Alright, bud')) {

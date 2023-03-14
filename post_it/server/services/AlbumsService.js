@@ -5,7 +5,7 @@ class AlbumsService {
   async archiveAlbum(albumId, userInfo) {
     const album = await this.getOneAlbumById(albumId);
 
-    const isAdmin = userInfo.roles.includes("Admin");
+    const isAdmin = userInfo.roles.includes("admin");
 
     if (album.creatorId.toString() != userInfo.id && !isAdmin) {
       throw new Forbidden(
