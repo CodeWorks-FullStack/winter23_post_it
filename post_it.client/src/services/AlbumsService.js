@@ -20,6 +20,7 @@ class AlbumsService {
   async createAlbum(formData) {
     const res = await api.post('api/albums', formData)
     logger.log('creating album', res.data)
+    // AppState.albums.push(new Album(res.data))
   }
 
   async archiveAlbum(albumId) {

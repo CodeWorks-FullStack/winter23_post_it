@@ -2,6 +2,7 @@ import { Auth0Provider } from "@bcwdev/auth0provider"
 import { albumMembersService } from "../services/AlbumMembersService.js"
 import { albumsService } from "../services/AlbumsService.js"
 import { picturesService } from "../services/PicturesService.js"
+import { socketProvider } from "../SocketProvider.js"
 import BaseController from "../utils/BaseController.js"
 
 export class AlbumsController extends BaseController {
@@ -71,6 +72,9 @@ export class AlbumsController extends BaseController {
       albumData.creatorId = req.userInfo.id // this makes me happy 😁
 
       const album = await albumsService.createAlbum(albumData)
+
+      socketProvider.message('created:album', album)
+
       return res.send(album)
 
 

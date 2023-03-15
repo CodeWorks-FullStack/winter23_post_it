@@ -1,5 +1,6 @@
 import { Auth0Provider } from "@bcwdev/auth0provider";
 import { picturesService } from "../services/PicturesService.js";
+import { socketProvider } from "../SocketProvider.js";
 import BaseController from "../utils/BaseController.js";
 
 export class PicturesController extends BaseController {
@@ -15,6 +16,10 @@ export class PicturesController extends BaseController {
       const pictureData = req.body
       pictureData.creatorId = req.userInfo.id
       const picture = await picturesService.createPicture(pictureData)
+
+      // @ts-ignore
+      socketProvider.messageRoom(picture.albumId.toString(), 'created:picture', picture)
+
       return res.send(picture)
     } catch (error) {
       next(error)

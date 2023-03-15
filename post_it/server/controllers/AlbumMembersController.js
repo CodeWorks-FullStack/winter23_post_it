@@ -1,6 +1,7 @@
 import BaseController from "../utils/BaseController.js";
 import { Auth0Provider } from '@bcwdev/auth0provider'
 import { albumMembersService } from "../services/AlbumMembersService.js";
+import { socketProvider } from "../SocketProvider.js";
 
 export class AlbumMembersController extends BaseController {
   constructor () {
@@ -16,6 +17,10 @@ export class AlbumMembersController extends BaseController {
       const albumMemberData = req.body
       albumMemberData.accountId = req.userInfo.id
       const albumMember = await albumMembersService.createAlbumMember(albumMemberData)
+
+      // @ts-ignore
+      socketProvider.messageUser(albumMember.album.creatorId.toString(), 'toUser:createdCollab', albumMember)
+
       return res.send(albumMember)
     } catch (error) {
       next(error)

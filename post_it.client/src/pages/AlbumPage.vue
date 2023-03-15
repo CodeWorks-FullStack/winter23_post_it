@@ -78,7 +78,7 @@
 
 
 <script>
-import { onMounted, computed, watchEffect } from 'vue';
+import { onMounted, computed, watchEffect, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { AppState } from '../AppState.js';
 import ModalComponent from '../components/ModalComponent.vue';
@@ -86,6 +86,7 @@ import PictureForm from '../components/PictureForm.vue';
 import { albumsService } from '../services/AlbumsService.js';
 import { collaboratorsService } from '../services/CollaboratorsService.js'
 import { picturesService } from '../services/PicturesService.js'
+import { socketService } from '../services/SocketService.js';
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
 
@@ -124,6 +125,27 @@ export default {
         Pop.error(error.message);
       }
     }
+
+    function joinRoom() {
+      try {
+        socketService.emit('join:room', { roomName: route.params.albumId })
+      } catch (error) {
+        console.error(error)
+        // @ts-ignore 
+        Pop.error(('[ERROR]'), error.message)
+      }
+    }
+
+    function leaveRoom() {
+      try {
+        socketService.emit('leave:room', { roomName: AppState.album.id })
+      } catch (error) {
+        console.error(error)
+        // @ts-ignore 
+        Pop.error(('[ERROR]'), error.message)
+      }
+    }
+
     // NOTE watcheffect replaced this
     // onMounted(() => {
     //   getOneAlbumById()
@@ -131,11 +153,17 @@ export default {
     // NOTE whenever a reactive property changes(route.params.albumId) rerun this code
     watchEffect(() => {
       if (route.params.albumId) {
+        joinRoom()
         getOneAlbumById();
         getPicturesByAlbumId();
         getCollaboratorsByAlbumId();
       }
     });
+
+    onUnmounted(() => {
+      leaveRoom()
+    })
+
     return {
       album: computed(() => AppState.album),
       pictures: computed(() => AppState.pictures),
