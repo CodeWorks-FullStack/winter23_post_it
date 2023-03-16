@@ -12,14 +12,14 @@
   <div class="container">
     <div class="row my-4">
       <div class="col-12 p-4 mb-3">
-        <h1 class="text-light">Albums</h1>
+        <h1 id="startVueTour" class="text-light">Albums</h1>
       </div>
       <div class="col-10 m-auto">
         <div class="bg-primary rounded p-3 d-flex justify-content-around">
-          <button @click="changeFilterCategory('')" class="btn btn-outline-light">All</button>
-          <button @click="changeFilterCategory('animals')" class="btn btn-outline-light">Animals</button>
-          <button @click="changeFilterCategory('games')" class="btn btn-outline-light">Games</button>
-          <button @click="changeFilterCategory('misc')" class="btn btn-outline-light">Misc</button>
+          <button id="allVue" @click="changeFilterCategory('')" class="btn btn-outline-light">All</button>
+          <button id="animalsVue" @click="changeFilterCategory('animals')" class="btn btn-outline-light">Animals</button>
+          <button id="gamesVue" @click="changeFilterCategory('games')" class="btn btn-outline-light">Games</button>
+          <button id="miscVue" @click="changeFilterCategory('misc')" class="btn btn-outline-light">Misc</button>
         </div>
       </div>
       <div class="col-md-3" v-for="a in albums" :key="a.id">
@@ -27,6 +27,9 @@
       </div>
     </div>
   </div>
+
+  <!-- <VueTour v-if="account.needsTour == true" /> -->
+  <VueTour />
 </template>
 
 <script>
